@@ -9,8 +9,19 @@ from omnitools import str_or_bytes, utf8d, charenc, p, args
 __ALL__ = ["file_size", "read", "write", "Writer"]
 
 
-def file_size(file: str) -> int:
-    return os.stat(file).st_size
+def file_size(path: str) -> int:
+    if os.path.isdir(path):
+        total_size = 0
+        for dirpath, _, filenames in os.walk(path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                if not os.path.islink(fp):
+                    total_size += os.path.getsize(fp)
+        return total_size
+    elif os.path.isfile(path):
+        return os.path.getsize(path)
+    else:
+        raise
 
 
 def read(file_path: str, encoding: str = None, depth: int = 2) -> str_or_bytes:
