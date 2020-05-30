@@ -6,7 +6,11 @@ from encryptedsocket import SC
 from omnitools import str_or_bytes, utf8d, charenc, p, args
 
 
-__ALL__ = ["read", "write", "Writer"]
+__ALL__ = ["file_size", "read", "write", "Writer"]
+
+
+def file_size(file: str) -> int:
+    return os.stat(file).st_size
 
 
 def read(file_path: str, encoding: str = None, depth: int = 2) -> str_or_bytes:
