@@ -9,9 +9,9 @@ from omnitools import str_or_bytes, utf8d, charenc, p, args
 __ALL__ = ["read", "write", "Writer"]
 
 
-def read(file_path: str, encoding: str = None) -> str_or_bytes:
+def read(file_path: str, encoding: str = None, depth: int = 2) -> str_or_bytes:
     if not os.path.isabs(file_path):
-        file_path = join_path(abs_main_dir(depth=2), file_path)
+        file_path = join_path(abs_main_dir(depth=int(depth)), file_path)
     if encoding:
         try:
             return open(file_path, "rb").read().decode(encoding=encoding)
@@ -68,9 +68,9 @@ class Writer(object):
         else:
             self.sc = SC()
 
-    def write(self, file_path: str, mode: str, content: str_or_bytes) -> bool:
+    def write(self, file_path: str, mode: str, content: str_or_bytes, depth: int = 2) -> bool:
         if not os.path.isabs(file_path):
-            file_path = join_path(abs_main_dir(depth=2), file_path)
+            file_path = join_path(abs_main_dir(depth=int(depth)), file_path)
         if mode not in ("w", "a", "wb", "ab"):
             raise Exception(f"mode {mode} is not 'w' or 'a' or 'wb' or 'ab'.")
         if mode in ("w", "a") and isinstance(content, bytes):
@@ -85,9 +85,9 @@ class Writer(object):
         return True
 
 
-def write(file_path: str, mode: str, content: str_or_bytes) -> bool:
+def write(file_path: str, mode: str, content: str_or_bytes, depth: int = 2) -> bool:
     if not os.path.isabs(file_path):
-        file_path = join_path(abs_main_dir(depth=2), file_path)
+        file_path = join_path(abs_main_dir(depth=int(depth)), file_path)
     try:
         return Writer().write(file_path, mode, content)
     except ConnectionRefusedError:
