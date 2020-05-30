@@ -15,9 +15,10 @@
 filehandling
 |---- path
 |   |---- temp_dir()
-|   |---- abs_cwd()
+|   |---- abs_main_dir()
 |   |---- abs_dir()
-|   '---- join_path()
+|   |---- join_path()
+|   '---- get_cwd()
 '---- file
     |---- read()
     |---- write()
@@ -31,10 +32,10 @@ filehandling
 ```python
 from filehandling import *
 
-# absolute current working directory
-print(abs_cwd())
+# absolute directory of program main script file/executable
+print(abs_main_dir())
 # specify an inspect stack depth
-print(abs_cwd(depth=2))
+print(abs_main_dir(depth=2))
 
 # absolute directory of somefile
 print(abs_dir("somefile"))
@@ -44,6 +45,9 @@ print(join_path(abs_cwd(), "..", "somefile"))
 
 # temporary directory of a bundled python application
 print(temp_dir())
+
+# absolute current working directory
+print(get_cwd())
 
 # read file content with automatic encoding detection
 print(read("somefile"))

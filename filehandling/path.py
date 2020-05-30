@@ -3,7 +3,7 @@ import sys
 import inspect
 
 
-__ALL__ = ["temp_dir", "abs_cwd", "abs_dir", "join_path"]
+__ALL__ = ["temp_dir", "abs_main_dir", "abs_dir", "join_path", "get_cwd"]
 
 
 def temp_dir() -> str:
@@ -12,7 +12,7 @@ def temp_dir() -> str:
     raise Exception("py script has no temp dir")
 
 
-def abs_cwd(depth: int = 1, if_py: str = "", if_bundled: str = "") -> str:
+def abs_main_dir(depth: int = 1, if_py: str = "", if_bundled: str = "") -> str:
     if getattr(sys, 'frozen', False):
         exe_dir = abs_dir(sys.executable)
         exe_dir = join_path(exe_dir, if_bundled)
@@ -29,5 +29,9 @@ def abs_dir(fn: str) -> str:
 
 def join_path(*paths: str) -> str:
     return os.path.normpath(os.path.join(*paths))
+
+
+def get_cwd() -> str:
+    return os.getcwd()
 
 
