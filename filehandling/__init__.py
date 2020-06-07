@@ -1,4 +1,4 @@
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 __keywords__ = ["file handling"]
 
 
@@ -12,4 +12,5 @@ if not __version__.endswith(".0"):
 
 from .path import *
 from .file import *
+from .directory import *
 
