@@ -6,8 +6,8 @@ from typing import Any
 __ALL__ = ["create_tree", "create_cascade", "format_cascade", "browse_directory"]
 
 
-def create_tree(root: str, files: list = None, key: Any = None) -> dict:
-    if files is None and key is None:
+def create_tree(root: str, files: list = None, key: Any = None, delimiter: str = None) -> dict:
+    if files is None and key is None and delimiter is None:
         files = []
         for a, b, c in os.walk(root):
             for file in c:
@@ -18,14 +18,15 @@ def create_tree(root: str, files: list = None, key: Any = None) -> dict:
                 ))
         files = sorted(files, reverse=True)
         key = 0
+        delimiter = os.path.sep
     tree = {}
     for file in files:
-        paths = file[key].split(os.path.sep)
+        paths = file[key].split(delimiter)
         if len(paths) == 1:
             _dir = ""
             item = (paths[0], file)
         else:
-            _dir = os.path.sep.join(paths[:-1])
+            _dir = delimiter.join(paths[:-1])
             item = (paths[-1], file)
         if _dir not in tree:
             if _dir == "":
@@ -36,11 +37,11 @@ def create_tree(root: str, files: list = None, key: Any = None) -> dict:
             tree[_dir].append(item)
         else:
             tree[_dir][""].append(item)
-    while any([os.path.sep in k for k, v in tree.items()]):
+    while any([delimiter in k for k, v in tree.items()]):
         for k, v in tree.copy().items():
-            if os.path.sep in k:
-                ks = k.split(os.path.sep)
-                new_k = os.path.sep.join(ks[:-1])
+            if delimiter in k:
+                ks = k.split(delimiter)
+                new_k = delimiter.join(ks[:-1])
                 sub_k = ks[-1]
                 if new_k not in tree:
                     tree[new_k] = {}
