@@ -7,7 +7,7 @@ __ALL__ = ["create_tree", "create_cascade", "format_cascade", "browse_directory"
 
 
 def create_tree(root: str, files: list = None, key: Any = None) -> dict:
-    if files is None and key is None:
+    if key is None:
         files = []
         for a, b, c in os.walk(root):
             for file in c:
@@ -182,7 +182,7 @@ def browse_directory(root: str):
                 for _dir in dirs:
                     cur_tree = cur_tree[_dir]
                 print(format_tree(cur_tree))
-        except KeyError as e:
+        except KeyError:
             current_dir = previous_dir
             previous_dir = ""
             continue
