@@ -7,7 +7,7 @@ __ALL__ = ["create_tree", "create_cascade", "format_cascade", "browse_directory"
 
 
 def create_tree(root: str, files: list = None, key: Any = None) -> dict:
-    if key is None:
+    if files is None and key is None:
         files = []
         for a, b, c in os.walk(root):
             for file in c:
