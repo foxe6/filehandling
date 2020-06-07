@@ -184,7 +184,7 @@ def browse_directory(root: str):
                 print(format_tree(cur_tree))
         except KeyError as e:
             current_dir = previous_dir
-            print(e)
+            previous_dir = ""
             continue
         except Exception as e:
             raise e
