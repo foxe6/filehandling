@@ -69,16 +69,29 @@ def dump_tree(d: dict, depth: int = 1) -> list:
     return cascade
 
 
-def format_cascade(cascade: list) -> str:
+def format_cascade(cascade: list, hyphen_count: int = 3, full_width: bool = False) -> str:
     formatted = ""
+    if hyphen_count < 1:
+        hyphen_count = 1
+    quote = "└"
+    hyphen = "─"
+    space = " "
+    bar = "│"
+    bar2 = "├"
+    if full_width:
+        quote = "＇"
+        hyphen = "－"
+        space = "　"
+        bar = "｜"
+        bar2 = "｜"
     for i, info in enumerate(cascade):
         indent = ""
         for j in range(1, info[0] + 1):
             if i+1 <= len(cascade) and j == info[0]:
                 if i+1 == len(cascade):
-                    head = "'"
+                    head = quote
                 elif j > cascade[i+1][0]:
-                    head = "'"
+                    head = quote
                 else:
                     last = -1
                     for k in range(i+1, len(cascade)):
@@ -90,12 +103,12 @@ def format_cascade(cascade: list) -> str:
                             break
                     # print(last)
                     if last > 0:
-                        head = "|"
+                        head = bar2
                     else:
-                        head = "'"
-                indent += head+"---"
+                        head = quote
+                indent += head+hyphen*hyphen_count
                 if j == info[0]:
-                    indent += " "
+                    indent += space
             else:
                 # if not (i-1+1 <= len(cascade) and j == info[0]) and \
                 #         not (i-1+1 == len(cascade)) and \
@@ -110,10 +123,10 @@ def format_cascade(cascade: list) -> str:
                         break
                 # print(last)
                 if last > 0:
-                    head = "|"
+                    head = bar
                 else:
-                    head = " "
-                indent += head+"  "
+                    head = space
+                indent += head+space*(hyphen_count-1)
         formatted += indent+info[1]+"\n"
     return formatted
 
