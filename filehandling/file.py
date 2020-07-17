@@ -131,7 +131,7 @@ class WriterU(Writer):
             thread.daemon = True
             thread.start()
         else:
-            self.sc = ESC(host, port)
+            self.sc = USC(host, port)
 
     def stop(self):
         super().stop()
