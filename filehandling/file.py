@@ -5,7 +5,7 @@ from .path import *
 from encryptedsocket import SC as ESC, SS as ESS
 from unencryptedsocket import SC as USC, SS as USS
 from easyrsa import *
-from omnitools import str_or_bytes, utf8d, charenc, p, args, key_pair_format
+from omnitools import str_or_bytes, utf8d, charenc, p, key_pair_format
 
 
 __ALL__ = ["file_size", "read", "write", "Writer"]
@@ -95,8 +95,6 @@ class Writer(object):
         _args = (file_path, mode, content)
         if self.is_server:
             self.fileq.put(_args)
-        else:
-            self.sc.request(command="write", data=args(_args))
         return True
 
 
@@ -158,11 +156,13 @@ class write(object):
 
 
 class writeE(write):
-    def write(self, file_path, mode, content):
+    def write(self, file_path, mode, content) -> bool:
         WriterE().write(file_path, mode, content)
+        return True
 
 
 class writeU(write):
-    def write(self, file_path, mode, content):
+    def write(self, file_path, mode, content) -> bool:
         WriterU().write(file_path, mode, content)
+        return True
 
