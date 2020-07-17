@@ -75,6 +75,7 @@ def format_cascade(cascade: list, hyphen_count: int = 3, full_width: bool = Fals
         hyphen_count = 1
     quote = "└"
     hyphen = "─"
+    hyphen2 = "┬"
     space = " "
     bar = "│"
     bar2 = "├"
@@ -106,7 +107,13 @@ def format_cascade(cascade: list, hyphen_count: int = 3, full_width: bool = Fals
                         head = bar2
                     else:
                         head = quote
-                indent += head+hyphen*hyphen_count
+                line = head+hyphen*hyphen_count
+                try:
+                    if cascade[i+1][0] > cascade[i][0]:
+                        line = head+hyphen*(hyphen_count-1)+hyphen2
+                except:
+                    pass
+                indent += line
                 if j == info[0]:
                     indent += space
             else:

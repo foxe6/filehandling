@@ -2,8 +2,10 @@ import queue
 import traceback
 import threading
 from .path import *
-from encryptedsocket import SC
-from omnitools import str_or_bytes, utf8d, charenc, p, args
+from encryptedsocket import SC as ESC, SS as ESS
+from unencryptedsocket import SC as USC, SS as USS
+from easyrsa import *
+from omnitools import str_or_bytes, utf8d, charenc, p, args, key_pair_format
 
 
 __ALL__ = ["file_size", "read", "write", "Writer"]
@@ -79,9 +81,7 @@ class Writer(object):
             self.fileq_worker = threading.Thread(target=self.worker)
             self.fileq_worker.daemon = True
             self.fileq_worker.start()
-            self.functions = dict(write=lambda _args: self.fileq.put(_args))
-        else:
-            self.sc = SC()
+            self.functions = dict(write=self.fileq.put)
 
     def write(self, file_path: str, mode: str, content: str_or_bytes, depth: int = 2) -> bool:
         if not os.path.isabs(file_path):
@@ -100,12 +100,69 @@ class Writer(object):
         return True
 
 
-def write(file_path: str, mode: str, content: str_or_bytes, depth: int = 2) -> bool:
-    if not os.path.isabs(file_path):
-        file_path = join_path(abs_main_dir(depth=int(depth)), file_path)
-    try:
-        return Writer().write(file_path, mode, content)
-    except ConnectionRefusedError:
-        open(file_path, mode).write(content)
-        return True
+class WriterE(Writer):
+    def __init__(self, server: bool = False, key_pair: key_pair_format = None) -> None:
+        super().__init__(server)
+        host = "127.199.71.10"
+        port = 39293
+        if self.is_server:
+            if key_pair is None:
+                key_pair = EasyRSA(bits=1024).gen_key_pair()
+            self.ess = ESS(key_pair, self.functions, host, port)
+            thread = threading.Thread(target=self.ess.start)
+            thread.daemon = True
+            thread.start()
+        else:
+            self.sc = ESC(host, port)
+
+    def stop(self):
+        super().stop()
+        self.ess.stop()
+
+
+class WriterU(Writer):
+    def __init__(self, server: bool = False) -> None:
+        super().__init__(server)
+        host = "127.199.71.10"
+        port = 39293
+        if self.is_server:
+            self.uss = USS(self.functions, host, port)
+            thread = threading.Thread(target=self.uss.start)
+            thread.daemon = True
+            thread.start()
+        else:
+            self.sc = ESC(host, port)
+
+    def stop(self):
+        super().stop()
+        self.uss.stop()
+
+
+class writeException(Exception):
+    pass
+
+
+class write(object):
+    def __init__(self, file_path: str, mode: str, content: str_or_bytes, depth: int = 2) -> None:
+        if not os.path.isabs(file_path):
+            file_path = join_path(abs_main_dir(depth=int(depth)), file_path)
+        try:
+            self.write(file_path, mode, content)
+        except ConnectionRefusedError:
+            open(file_path, mode).write(content)
+        except writeException:
+            open(file_path, mode).write(content)
+
+    def write(self, file_path, mode, content):
+        raise writeException()
+
+
+class writeE(write):
+    def write(self, file_path, mode, content):
+        WriterE().write(file_path, mode, content)
+
+
+class writeU(write):
+    def write(self, file_path, mode, content):
+        WriterU().write(file_path, mode, content)
 
