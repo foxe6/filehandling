@@ -18,9 +18,12 @@ open("README.md", "wb").write(readme.encode("utf-8"))
 description = re.search(r"<i>(.*?)</i>", readme)[1]
 setup(
     name="filehandling",
-    version="0.18.0",
+    version="0.19.0",
     keywords=["file handling"],
     packages=find_packages(),
+    package_data = {
+        '': ['*.ttc'],
+    },
     url="https://github.com/foxe6/filehandling",
     license="AGPL-3.0",
     author="f̣ộx̣ệ6",

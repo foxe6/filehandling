@@ -111,7 +111,7 @@ class WriterE(Writer):
         if self.is_server:
             if key_pair is None:
                 key_pair = EasyRSA(bits=1024).gen_key_pair()
-            self.ess = ESS(key_pair, self.functions, host, port)
+            self.ess = ESS(key_pair, self.functions, host, port, True)
             thread = threading.Thread(target=self.ess.start)
             thread.daemon = True
             thread.start()
@@ -129,7 +129,7 @@ class WriterU(Writer):
         host = "127.199.71.10"
         port = 39293
         if self.is_server:
-            self.uss = USS(self.functions, host, port)
+            self.uss = USS(self.functions, host, port, True)
             thread = threading.Thread(target=self.uss.start)
             thread.daemon = True
             thread.start()
