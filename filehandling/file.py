@@ -48,18 +48,16 @@ def read(file_path: str, encoding: str = None, depth: int = 2) -> str_or_bytes:
 class Writer(object):
     def worker(self) -> None:
         while not self.terminate:
-            file_path, mode, content = self.fileq.get()
+            file_path, mode, content, timestamp = self.fileq.get()
+            if not os.path.isdir(os.path.dirname(file_path)):
+                os.makedirs(os.path.dirname(file_path))
             if not os.path.isfile(file_path):
-                try:
-                    os.makedirs(os.path.dirname(file_path))
-                except:
-                    pass
-                try:
-                    open(file_path, "ab").close()
-                except:
-                    pass
+                open(file_path, "ab").close()
             try:
-                open(file_path, mode).write(content)
+                fo = open(file_path, mode)
+                fo.write(content)
+                fo.flush()
+                fo.close()
             except Exception as e:
                 what = content
                 p(f"cannot write {what} to file {file_path} using mode {mode} due to {e}")
@@ -104,10 +102,10 @@ class Writer(object):
 
 
 class WriterE(Writer):
-    def __init__(self, server: bool = False, key_pair: key_pair_format = None) -> None:
-        super().__init__(server)
+    def __init__(self, writer_port: int = None, key_pair: key_pair_format = None, **kwargs) -> None:
+        super().__init__(**kwargs)
         host = "127.199.71.10"
-        port = 39293
+        port = writer_port if writer_port else 39293
         if self.is_server:
             if key_pair is None:
                 key_pair = EasyRSA(bits=1024).gen_key_pair()
@@ -124,10 +122,10 @@ class WriterE(Writer):
 
 
 class WriterU(Writer):
-    def __init__(self, server: bool = False) -> None:
-        super().__init__(server)
+    def __init__(self, writer_port: int = None, **kwargs) -> None:
+        super().__init__(**kwargs)
         host = "127.199.71.10"
-        port = 39293
+        port = writer_port if writer_port else 39293
         if self.is_server:
             self.uss = USS(self.functions, host, port, True)
             thread = threading.Thread(target=self.uss.start)
