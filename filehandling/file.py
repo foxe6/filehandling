@@ -48,7 +48,7 @@ def read(file_path: str, encoding: str = None, depth: int = 2) -> str_or_bytes:
 class Writer(object):
     def worker(self) -> None:
         while not self.terminate:
-            file_path, mode, content, timestamp = self.fileq.get()
+            file_path, mode, content = self.fileq.get()
             if not os.path.isdir(os.path.dirname(file_path)):
                 os.makedirs(os.path.dirname(file_path))
             if not os.path.isfile(file_path):
